@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  msbuild:
+    name: MSBuild (sln) ${{ matrix.config }} ${{ matrix.platform }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config: [Release, Debug]
+        platform: [x64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v2
+      - name: Build
+        run: msbuild mdldec.sln /p:Configuration=${{ matrix.config }} /p:Platform=${{ matrix.platform }} /v:minimal /m
+      - name: Smoke test (Release only)
+        if: matrix.config == 'Release'
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File test/smoke.ps1 -Exe bin/x64/Release/mdldec.exe
+
+  cmake:
+    name: CMake + ctest
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure (MSVC only)
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+      - name: Build
+        run: cmake --build build --config Release
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure

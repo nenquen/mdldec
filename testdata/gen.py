@@ -1,5 +1,5 @@
-import struct, os
-out = r"C:\Workplace\mdldec\testdata\synthetic.mdl"
+import struct, os, sys
+out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "synthetic.mdl")
 os.makedirs(os.path.dirname(out), exist_ok=True)
 # header layout
 # id, version, name64, length, 15 floats, then 25 int32s? count: flags,numbones,boneindex,numbonecontrollers,bonecontrollerindex,numhitboxes,hitboxindex,numseq,seqindex,numseqgroups,seqgroupindex,numtextures,textureindex,texturedataindex,numskinref,numskinfamilies,skinindex,numbodyparts,bodypartindex,numattachments,attachmentindex,soundtable,soundindex,soundgroups,soundgroupindex,numtransitions,transitionindex = 27 ints

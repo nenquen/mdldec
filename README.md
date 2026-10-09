@@ -1,5 +1,7 @@
 # mdldec — GoldSrc model decompiler (MSVC-only CLI)
 
+[![ci](https://github.com/nenquen/mdldec/actions/workflows/ci.yml/badge.svg)](https://github.com/nenquen/mdldec/actions/workflows/ci.yml)
+
 `mdldec` decompiles GoldSrc (Half-Life 1) formats:
 
 * `.mdl` → `.qc` + `.smd` + `.bmp` textures
@@ -25,6 +27,16 @@ Alternative via CMake (Visual Studio generator only):
 cmake -S . -B build -G "Visual Studio 17 2022" -A x64
 cmake --build build --config Release
 ```
+
+## Tests
+
+```powershell
+powershell -ExecutionPolicy Bypass -File test/smoke.ps1 -Exe bin/x64/Release/mdldec.exe
+```
+
+Or via CMake: `ctest --test-dir build -C Release --output-on-failure`.
+CI (`.github/workflows/ci.yml`) builds Debug+Release with MSBuild and
+Release with CMake, then runs the smoke test.
 
 ## Usage — drag-and-drop
 

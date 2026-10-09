@@ -41,3 +41,13 @@ set_target_properties(mdldec PROPERTIES
 )
 
 install(TARGETS mdldec DESTINATION .)
+
+include(CTest)
+if(BUILD_TESTING)
+  find_program(POWERSHELL_EXE powershell REQUIRED)
+  find_program(PYTHON_EXE python REQUIRED)
+  add_test(NAME smoke
+    COMMAND ${POWERSHELL_EXE} -NoProfile -ExecutionPolicy Bypass
+      -File ${CMAKE_CURRENT_SOURCE_DIR}/test/smoke.ps1
+      -Exe $<TARGET_FILE:mdldec>)
+endif()
