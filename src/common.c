@@ -195,8 +195,42 @@ static bool makedir (const char *path)
 
 bool makepath (const char *path)
 {
-    char *c = path;
+    char *c = (char *)path;
     char slash;
+
+    /* Skip the volume root: creating "X:", "X:\", "\" or "\\server\share\"
+       is never valid. Notably _mkdir("X:") fails with EACCES (not EEXIST)
+       when the process CWD is on a different drive, which broke output
+       next to the input file whenever input and CWD drives differed. */
+    if (c[0] && c[1] == ':')
+    {
+        c += 2;
+        if (isslash (c))
+            ++c;
+    }
+    else if (isslash (c) && isslash (c + 1))
+    {
+        /* UNC path: skip "\\server\share\". */
+        c += 2;
+        int parts = 0;
+        while (*c && parts < 2)
+        {
+            if (isslash (c))
+            {
+                ++parts;
+                if (parts == 2)
+                {
+                    ++c;
+                    break;
+                }
+            }
+            ++c;
+        }
+    }
+    else if (isslash (c))
+    {
+        ++c;
+    }
 
     while (*c)
     {
