@@ -1,7 +1,7 @@
 # Smoke test for mdldec (MSVC build output).
 # Usage: powershell -ExecutionPolicy Bypass -File test/smoke.ps1 [-Exe <path>] [-WorkDir <path>]
 param(
-  [string]$Exe = "bin/x64/Release/mdldec.exe",
+  [string]$Exe = "bin/Release/mdldec.exe",
   [string]$WorkDir = ""
 )
 

@@ -11,32 +11,26 @@
 Based on `DecompMDL` from [Toodles2You/halflife-tools](https://github.com/Toodles2You/halflife-tools).
 See `LICENSE` (Valve HL1 SDK license applies to the core).
 
-## Build — MSVC only, no MinGW
+## Build — pure MSVC only, no MSBuild, no MinGW
 
-Open `mdldec.sln` in Visual Studio and build, or from CLI:
-
-```bat
-msbuild mdldec.sln /p:Configuration=Release /p:Platform=x64
-```
-
-Output: `bin\x64\Release\mdldec.exe`
-
-Alternative via CMake (Visual Studio generator only):
+Double-click or run:
 
 ```bat
-cmake -S . -B build -G "Visual Studio 17 2022" -A x64
-cmake --build build --config Release
+build.bat Release x64
 ```
+
+Output: `bin\Release\mdldec.exe`. This calls `cl.exe` directly
+(VS located via `vswhere`). `mdldec.sln` also exists for IDE users.
 
 ## Tests
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File test/smoke.ps1 -Exe bin/x64/Release/mdldec.exe
+powershell -ExecutionPolicy Bypass -File test/smoke.ps1 -Exe bin/Release/mdldec.exe
 ```
 
 Or via CMake: `ctest --test-dir build -C Release --output-on-failure`.
-CI (`.github/workflows/ci.yml`) builds Debug+Release with MSBuild and
-Release with CMake, then runs the smoke test.
+CI (`.github/workflows/ci.yml`) runs `build.bat` (Release+Debug) and
+the smoke test on Release.
 
 ## Usage — drag-and-drop
 
