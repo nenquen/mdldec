@@ -13,6 +13,23 @@ function Ok($msg) { Write-Host "PASS: $msg" }
 $root = Split-Path -Parent $PSScriptRoot
 if (-not [IO.Path]::IsPathRooted($Exe)) { $Exe = Join-Path $root $Exe }
 if (-not (Test-Path $Exe)) { Fail "exe not found: $Exe" }
+Write-Host "Exe: $Exe"
+
+# Python discovery: prefer 'python', fall back to the 'py -3' launcher
+# (bare 'python' can resolve to the Microsoft Store stub on some machines).
+$script:PyExe = $null
+$script:PyArgs = @()
+foreach ($cand in @(@{ exe = 'python'; args = @() }, @{ exe = 'py'; args = @('-3') })) {
+  try {
+    & $cand.exe $cand.args --version
+    if ($LASTEXITCODE -eq 0) {
+      $script:PyExe = $cand.exe
+      $script:PyArgs = $cand.args
+      break
+    }
+  } catch { }
+}
+if (-not $script:PyExe) { Fail "no working python found (tried 'python', 'py -3'). PATH=$env:PATH" }
 
 if ($WorkDir -eq "") {
   $WorkDir = Join-Path ([IO.Path]::GetTempPath()) ("mdldec-test-" + [Guid]::NewGuid().ToString("N"))
@@ -25,7 +42,7 @@ try {
   $mdl1 = Join-Path $WorkDir "synthetic.mdl"
   $mdl2 = Join-Path $WorkDir "synthetic2.mdl"
 
-  & python $gen $mdl1
+  & $script:PyExe $script:PyArgs $gen $mdl1
   if ($LASTEXITCODE -ne 0) { Fail "gen.py failed" }
   Copy-Item $mdl1 $mdl2
 
