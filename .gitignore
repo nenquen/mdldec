@@ -5,3 +5,6 @@ out/
 .vs/
 *.user
 *.suo
+*.pdb
+*.obj
+*.ilk
