@@ -16,8 +16,6 @@ without written permission from Valve LLC.
 
 #include "pch.h"
 
-#include "studio.h"
-
 bool g_dragdrop_pause = false;
 
 void decomp_mdl (

@@ -43,7 +43,6 @@ void decomp_studioanim (
     const char *nodes);
 
 static void decomp_writeinfo (
-    FILE *mdl,
     FILE *tex,
     FILE *qc,
     const char *cd,
@@ -618,7 +617,6 @@ static void decomp_writeseqdesc (
     FILE *mdl,
     FILE *qc,
     const char *cdanim,
-    studiohdr_t *header,
     mstudioseqdesc_t *seq)
 {
     qc_putc (qc, ' ');
@@ -732,7 +730,7 @@ static void decomp_writesequences (
 
         if (!decomp_simplesequence (&seq))
         {
-            decomp_writeseqdesc (mdl, qc, cdanim, header, &seq);
+            decomp_writeseqdesc (mdl, qc, cdanim, &seq);
             continue;
         }
 
@@ -899,7 +897,7 @@ void decomp_mdl (
 
     char *nodes = decomp_makenodes (mdl, &header);
 
-    decomp_writeinfo (mdl, tex, qc, cd, cdtexture, &header, &textureheader, modelname);
+    decomp_writeinfo (tex, qc, cd, cdtexture, &header, &textureheader, modelname);
     decomp_writebodygroups (mdl, tex, qc, smddir, &header, &textureheader, nodes);
     decomp_writeskingroups (mdl, tex, qc, &header, &textureheader);
     decomp_writeattachments (mdl, qc, &header);

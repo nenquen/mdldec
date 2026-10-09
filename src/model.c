@@ -49,13 +49,11 @@ static void decomp_bonetransform (
 }
 
 static void decomp_writeskeleton (
-    FILE *mdl,
     FILE *smd,
     studiohdr_t *header,
-    mstudiobone_t *bones,
-    int time)
+    mstudiobone_t *bones)
 {
-    qc_writef (smd, "  time %i", time);
+    qc_write (smd, "  time 0");
 
     int i;
 
@@ -108,10 +106,7 @@ static void decomp_mesh (
     vec3_t *norms,
     byte *vert_bones,
     byte *norm_bones,
-    studiohdr_t *header,
-    mstudiomesh_t *mesh,
     mstudiotexture_t *texture,
-    mstudiobone_t *bones,
     mat4x3_t *bone_transform)
 {
     float s = 1.0F / texture->width;
@@ -197,10 +192,8 @@ static void decomp_meshes (
     FILE *mdl,
     FILE *tex,
     FILE *smd,
-    studiohdr_t *header,
     studiohdr_t *textureheader,
     mstudiomodel_t *model,
-    mstudiobone_t *bones,
     mat4x3_t *bone_transform)
 {
     int i;
@@ -252,10 +245,7 @@ static void decomp_meshes (
             norms,
             vert_bones,
             norm_bones,
-            header,
-            &mesh,
             &texture,
-            bones,
             bone_transform);
     }
     
@@ -290,10 +280,10 @@ void decomp_studiomodel (
     decomp_bonetransform (header, bones, bone_transform);
     
     qc_write (smd, "skeleton");
-    decomp_writeskeleton (mdl, smd, header, bones, 0);
+    decomp_writeskeleton (smd, header, bones);
     qc_write (smd, "end");
 
-    decomp_meshes (mdl, tex, smd, header, textureheader, model, bones, bone_transform);
+    decomp_meshes (mdl, tex, smd, textureheader, model, bone_transform);
     
     free (bone_transform);
     free (bones);

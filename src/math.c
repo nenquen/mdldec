@@ -16,10 +16,7 @@ without written permission from Valve LLC.
 
 #include "pch.h"
 
-
 #include <math.h>
-
-#include "studio.h"
 
 void anglequaternion (const vec3_t angles, vec4_t quaternion)
 {

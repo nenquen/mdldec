@@ -92,7 +92,7 @@ void info_mdl (const char *mdlname, const char *args)
         wadinfo_t info;
         mdl_read (mdl, &info, sizeof (info));
 
-        int i, j;
+        int i;
 
         lumpinfo_t lumpinfo;
         miptex_t mip;
@@ -165,7 +165,7 @@ void info_mdl (const char *mdlname, const char *args)
         dheader_t header;
         mdl_read (mdl, &header, sizeof (header));
 
-        int i, j;
+        int i;
 
         int32_t nummiptex;
         int32_t dataofs;
