@@ -79,6 +79,13 @@
       default = self.packages.${system}.mdldec;
     });
 
+    # The same derivation, built from a caller-supplied pkgs. The package is
+    # unfree, and nixpkgs refuses to instantiate an unfree package unless
+    # *that* pkgs set allows it. `inputs.<name>.follows` only pins the nixpkgs
+    # source; it does not carry a `config.allowUnfree` across, so a consumer
+    # that already allows unfree packages still has to inject its own pkgs.
+    lib.mdldec = pkgs: mdldecFor pkgs;
+
     checks = forAllSystems (system: {
       mdldec = self.packages.${system}.mdldec;
     });
