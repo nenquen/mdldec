@@ -26,4 +26,20 @@ jobs:
         run: dir bin/${{ matrix.config }}
       - name: Smoke test (Release only)
         if: matrix.config == 'Release'
-        run: powershell -NoProfile -ExecutionPolicy Bypass -File test/smoke.ps1 -Exe bin/Release/mdldec.exe
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File test/smoke.ps1 -Exe bin/Release/mdldec
+
+  linux:
+    name: nix flake build + smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+      # The Half-Life 1 SDK license is not OSI-approved, so the package is
+      # marked unfree and nixpkgs refuses to evaluate it without this.
+      - name: Build flake and run smoke test
+        run: nix build --impure
+        env:
+          NIXPKGS_ALLOW_UNFREE: "1"
+      - name: Show binary
+        run: ./result/bin/mdldec -help.exe
