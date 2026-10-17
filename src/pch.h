@@ -17,7 +17,16 @@ without written permission from Valve LLC.
 #ifndef _PCH_H
 #define _PCH_H
 
-/* mdldec: MSVC-only. MinGW is not supported. */
+/* mdldec: MSVC (Windows) and GCC/Clang (Linux) are both supported.
+   The build is Windows-first: MSVC remains the reference compiler, but the
+   POSIX path is exercised by the Nix flake on NixOS. */
+
+#if !defined(_WIN32) && !defined(_DEFAULT_SOURCE)
+/* Exposes POSIX strdup/strcasecmp under -std=c11. Feature-test macros are
+   only honoured before the first libc header is included, so this must sit
+   above every #include in this file. */
+#define _DEFAULT_SOURCE
+#endif
 
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
@@ -37,11 +46,11 @@ without written permission from Valve LLC.
 #endif
 
 /* strcasecmp/strdup are POSIX names; map them to MSVC equivalents. */
-#ifndef strcasecmp
+#ifdef _WIN32
 #define strcasecmp _stricmp
-#endif
-#ifndef strdup
 #define strdup _strdup
+#else
+#include <strings.h>
 #endif
 
 #include "decompile.h"
